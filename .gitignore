@@ -1,0 +1,7 @@
+*.log
+*.tmp
+*.pth
+/FER2013-new/
+/RAF-DB-new/
+/output_dir/
+/Affwild2_examples/
