@@ -79,7 +79,7 @@ def get_args_parser():
                         help='path where to save, empty for no saving')
     parser.add_argument('--log_dir', default='./output_dir',
                         help='path where to tensorboard log')
-    parser.add_argument('--device', default='cuda:1',
+    parser.add_argument('--device', default='cuda:0',
                         help='device to use for training / testing')
     parser.add_argument('--seed', default=0, type=int)
     parser.add_argument('--resume', default='',
@@ -156,7 +156,11 @@ def main(args):
     model = models_mae.__dict__[args.model](norm_pix_loss=args.norm_pix_loss)
 
     model.to(device)
-
+    # 模型可视化
+    # dummy_input = torch.randn(1, 3, args.input_size, args.input_size).to(device)
+    # if log_writer is not None:
+    #     log_writer.add_graph(model, dummy_input)
+    
     model_without_ddp = model
     print("Model = %s" % str(model_without_ddp))
 

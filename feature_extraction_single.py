@@ -54,7 +54,7 @@ for folder_name, image_paths in image_folders.items():
         images = torch.stack([img])  # 将图像堆叠为批次
 
         with torch.no_grad():
-            features = model.forward_encoder(images, mask_ratio=0.75)[0]  # 提取特征
+            features = model.forward_encoder(images, mask_ratio=0)[0]  # 提取特征
             num_patches = features.shape[1]
             embed_dim = features.shape[2]
             features = features.permute(0, 2, 1).reshape(1, num_patches, embed_dim).cpu().numpy()
