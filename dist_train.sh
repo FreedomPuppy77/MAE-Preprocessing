@@ -1,5 +1,5 @@
 export IMAGENET_DIR=/data/lyh/AffectNet
-export JOB_DIR=/home/sherry/lyh/mae/AffectNet
+export JOB_DIR=/data/lyh/AffectNet/AffectNet_log
 python submitit_pretrain.py \
     --job_dir ${JOB_DIR} \
     --nodes 1 \
