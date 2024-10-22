@@ -8,7 +8,8 @@ python submitit_pretrain.py \
     --model mae_vit_base_patch16 \
     --norm_pix_loss \
     --mask_ratio 0.75 \
-    --epochs 500 \
+    --epochs 800 \
     --warmup_epochs 40 \
     --blr 5e-4 --weight_decay 0.05 \
-    --data_path ${IMAGENET_DIR} 
+    --data_path ${IMAGENET_DIR} \
+    --resume /data/lyh/AffectNet/AffectNet_log/checkpoint-480.pth

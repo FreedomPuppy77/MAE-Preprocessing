@@ -7,12 +7,12 @@ from torchvision.datasets import ImageFolder
 from PIL import Image
 from models_mae import MaskedAutoencoderViT  # 确保模型定义文件路径正确
 
-output_dir = '/data/lyh/Affwild2_examples/npy_data/train/'
+output_dir = '/data/lyh/Affwild2/npy_data/train/'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 # 1. 加载检查点
-checkpoint = torch.load('/home/sherry/lyh/mae/Affwild2_examples/checkpoint-199.pth', map_location='cpu')
+checkpoint = torch.load('/data/lyh/AffectNet/AffectNet_log/checkpoint-799.pth', map_location='cpu')
 print(checkpoint.keys())  # 检查检查点中包含的键
 
 # 2. 定义数据预处理
@@ -36,7 +36,7 @@ def load_dataset_from_subfolders(root_dir):
     return datasets
 
 # 4. 加载数据集
-image_folders = load_dataset_from_subfolders('/data/lyh/Affwild2_examples/aligned/train')
+image_folders = load_dataset_from_subfolders('/data/lyh/Affwild2/cropped_aligned/train')
 print(f"Loaded folders: {image_folders.keys()}")
 for folder_name, image_paths in image_folders.items():
     print(f"{folder_name}: {len(image_paths)} images")
@@ -63,7 +63,7 @@ for folder_name, image_paths in image_folders.items():
         img_name = os.path.splitext(os.path.basename(img_path))[0]
         
         # 创建保存目录（如果不存在）
-        folder_output_dir = f'/data/lyh/Affwild2_examples/npy_data/train/{folder_name}'
+        folder_output_dir = f'/data/lyh/Affwild2/npy_data/train/{folder_name}'
         os.makedirs(folder_output_dir, exist_ok=True)  # 确保文件夹存在
         
         # 保存特征为.npy文件，文件名与图片名相同

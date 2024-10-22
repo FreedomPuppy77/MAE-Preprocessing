@@ -33,9 +33,9 @@ def prepare_model(chkpt_dir, arch='mae_vit_large_patch16'):
     return model
 
 def run_one_image(img, model, save_dir):
-    x = torch.tensor(img)
-    x = x.unsqueeze(dim=0)
-    x = torch.einsum('nhwc->nchw', x)
+    x = torch.tensor(img) # img 是一个 (224, 224, 3) 的图像（H, W, C），代表图像的高度、宽度和通道（RGB）。
+    x = x.unsqueeze(dim=0)# 扩展一个维度，形状变为 (1, 224, 224, 3)，适应批次处理
+    x = torch.einsum('nhwc->nchw', x)# 将维度顺序从 (N, H, W, C) 转换为 (N, C, H, W)
 
     loss, y, mask = model(x.float(), mask_ratio=0.75)
     y = model.unpatchify(y)
@@ -78,7 +78,7 @@ def main():
 
     # img_url = 'https://user-images.githubusercontent.com/11435359/147738734-196fd92f-9260-48d5-ba7e-bf103d29364d.jpg'
     # img = Image.open(requests.get(img_url, stream=True).raw)
-    img_path = '/data/lyh/mae_demo/image/00032.jpg'
+    img_path = '/data/lyh/mae_demo/image/00372.jpg'
     img = Image.open(img_path)
     img = img.resize((224, 224))
     img = np.array(img) / 255.
@@ -96,6 +96,8 @@ def main():
 
     # chkpt_dir = '/data/lyh/AffectNet/AffectNet_log/checkpoint-160.pth'
     chkpt_dir = '/data/lyh/mae_visualize_vit_large.pth'
+    checkpoint = torch.load(chkpt_dir, map_location='cpu')
+    print(checkpoint.keys())
     model_mae = prepare_model(chkpt_dir, 'mae_vit_large_patch16')
     print('Model loaded.')
 
