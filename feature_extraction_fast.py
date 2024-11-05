@@ -1,7 +1,9 @@
 import os
 import torch
 import numpy as np
+import torch.nn as nn
 from torchvision import transforms
+from functools import partial
 from torch.utils.data import DataLoader
 from PIL import Image
 from models_mae import MaskedAutoencoderViT
@@ -9,12 +11,12 @@ from concurrent.futures import ProcessPoolExecutor, as_completed # 导入多进�
 from tqdm import tqdm
 
 
-output_dir = '/data/lyh/Affwild2/npy_data/train_new/'
+output_dir = '/data/lyh/mae_demo/npy'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 # 1. 加载检查点
-checkpoint = torch.load('/data/lyh/AffectNet/AffectNet_log/checkpoint-799.pth', map_location='cpu')
+checkpoint = torch.load('/data/lyh/mae_visualize_vit_large.pth', map_location='cpu')
 print(checkpoint.keys())
 
 # 2. 定义数据预处理
@@ -42,10 +44,16 @@ image_folders = load_dataset_from_subfolders('/data/lyh/Affwild2/cropped_aligned
 print(f"Loaded folders: {image_folders.keys()}")
 
 # 5. 创建模型实例并加载状态字典
-model = MaskedAutoencoderViT(img_size=224, patch_size=16, in_chans=3, embed_dim=768, depth=12, num_heads=12, decoder_embed_dim=512, decoder_depth=8, decoder_num_heads=16, mlp_ratio=4, norm_layer=torch.nn.LayerNorm)
+model = MaskedAutoencoderViT(img_size=224, patch_size=16, in_chans=3, embed_dim=1024, depth=24, num_heads=16, 
+                             decoder_embed_dim=512, decoder_depth=8, decoder_num_heads=16, mlp_ratio=4, norm_layer=partial(nn.LayerNorm, eps=1e-6))
 model.load_state_dict(checkpoint['model'])
 model.eval()
-
+# def mae_vit_large_patch16_dec512d8b(**kwargs):
+#     model = MaskedAutoencoderViT(
+#         patch_size=16, embed_dim=1024, depth=24, num_heads=16,
+#         decoder_embed_dim=512, decoder_depth=8, decoder_num_heads=16,
+#         mlp_ratio=4, norm_layer=partial(nn.LayerNorm, eps=1e-6), **kwargs)
+#     return model
 # 移动模型到GPU
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model.to(device)

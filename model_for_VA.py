@@ -29,7 +29,7 @@ class MAEForVATask(nn.Module):
         # 用于VA任务的线性回归层
         self.head = nn.Sequential(
             nn.LayerNorm(embed_dim),  # 归一化层
-            nn.Dropout(0.3),
+            nn.Dropout(0.4),
             nn.Linear(embed_dim, num_classes)  # 全连接层，用于输出情感的Valence和Arousal
         )
         # --------------------------------------------------------------------------
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     model = mae_vit_large_for_va(num_classes=2)  # num_classes=2 用于情感分析中的Valence和Arousal
     
     # 加载预训练权重
-    checkpoint_path = "/data/lyh/mae_visualize_vit_large.pth"  # 请替换为实际的预训练权重路径
+    checkpoint_path = "/home/sherry/lyh/mae/logs/checkpoint-2.pth"  # 请替换为实际的预训练权重路径
     model.load_pretrained_weights(checkpoint_path)
     
     # 测试输入

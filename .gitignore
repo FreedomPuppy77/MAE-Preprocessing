@@ -1,8 +1,10 @@
 *.log
 *.tmp
 *.pth
+*.txt
 /FER2013-new/
 /RAF-DB-new/
 /output_dir/
 /Affwild2_examples/
 /AffectNet/
+/checkpoints/

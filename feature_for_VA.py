@@ -35,10 +35,10 @@ def load_pretrained_mae_feature_extractor(ckpt_path):
     
     # 加载预训练的权重
     checkpoint = torch.load(ckpt_path, map_location='cpu')
-    state_dict = checkpoint['model']
+    # state_dict = checkpoint['model']
     
     # 手动过滤掉解码器的权重，只保留编码器的权重
-    encoder_state_dict = {k: v for k, v in state_dict.items() if 'decoder' not in k}
+    encoder_state_dict = {k: v for k, v in checkpoint.items() if 'decoder' not in k}
 
     # 获取模型当前的参数
     model_state_dict = model.state_dict()
@@ -57,9 +57,10 @@ def load_pretrained_mae_feature_extractor(ckpt_path):
 
 # 输入预处理
 transform = transforms.Compose([
-    transforms.Resize((224, 224)),  # 调整图像大小为224x224
+    transforms.Resize(size=(256, 256), interpolation=Image.BICUBIC, antialias=True), 
+    transforms.CenterCrop(224),# 从缩放后的图像中心裁剪224x224的区域
     transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # 归一化
+    transforms.Normalize(mean=[0.471, 0.363, 0.333], std=[0.220, 0.193, 0.180])
 ])
 
 # 自定义数据集类，支持递归遍历子文件夹
@@ -119,17 +120,18 @@ def save_features(batch_features, batch_paths, save_dir, root_dir):
 # 使用方法
 if __name__ == "__main__":
     # 1. 加载预训练模型
-    ckpt_path = "/data/lyh/mae_visualize_vit_large.pth"  # 替换为你预训练模型的路径
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    ckpt_path = "/home/sherry/lyh/mae/logs/checkpoint-2.pth"  # 替换为你预训练模型的路径
     model = load_pretrained_mae_feature_extractor(ckpt_path)
     model.cuda()  # 如果使用GPU
 
     # 2. 定义数据集
-    img_dir = '/data/lyh/Affwild2/cropped_aligned/train'  # 替换为你的图像文件夹路径
+    img_dir = '/data/lyh/Affwild2/cropped_aligned/val'  # 替换为你的图像文件夹路径
     dataset = CustomImageDataset(img_dir, transform=transform)
     
     # 使用多个线程加载数据
-    dataloader = DataLoader(dataset, batch_size=32, shuffle=False, num_workers=4)
+    dataloader = DataLoader(dataset, batch_size=32, shuffle=False, num_workers=8)
 
     # 3. 提取特征并保存
-    save_dir = "/data/lyh/Affwild2/npy_data/train"  # 替换为你希望保存特征的文件夹路径
+    save_dir = "/data/lyh/Affwild2/finetun_data/npy_finetun_data/val"  # 替换为你希望保存特征的文件夹路径
     extract_and_save_features_batch(model, dataloader, save_dir, img_dir)
